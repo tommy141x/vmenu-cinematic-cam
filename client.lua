@@ -32,7 +32,7 @@ Config.incrSmoothness    = 0.1
 Config.maxSmoothness     = 1.0
 
 Config.menuTitle         = "Cinematic Cam"
-Config.menuSubtitle      = "Control the Cinematic Camera"
+Config.menuSubtitle      = "Cinematic Camera"
 Config.toggleCam         = "Camera Active"
 Config.toggleCamDesc     = "Toggle camera on/off"
 Config.moveSpeed         = "Movement Speed"
@@ -196,6 +196,11 @@ RegisterKeyMapping('+cam_roll_right', 'Camera: Roll Right', 'keyboard', 'e')
 RegisterCommand('+cam_shift', function() keyStates.holdShift = true end, false)
 RegisterCommand('-cam_shift', function() keyStates.holdShift = false end, false)
 RegisterKeyMapping('+cam_shift', 'Camera: Hold for Speed Control', 'keyboard', 'LSHIFT')
+
+-- Command to open the cinematic camera menu
+RegisterCommand('cinecam', function()
+    exports["vMenu"]:OpenMenu("cinematic_cam")
+end, false)
 
 --------------------------------------------------
 --------------- MENU CREATION --------------------
