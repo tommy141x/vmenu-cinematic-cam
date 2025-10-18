@@ -762,4 +762,26 @@ function ToggleAttachMode(playerEntity)
     end
 end
 
-createCinematicCamMenu()
+local resourceName = GetCurrentResourceName()
+
+-- Listen for vMenu initialization complete event
+AddEventHandler("vMenu:SetupTickFunctions", function()
+    print("^3[" .. resourceName .. "]^7 vMenu initialization detected, creating cinematic camera menu...")
+    Citizen.Wait(100)
+    createCinematicCamMenu()
+end)
+
+-- Resource start handler
+AddEventHandler('onResourceStart', function(resource)
+    if resource == resourceName then
+        print("^2[" .. resourceName .. "]^7 Cinematic Camera Plugin loaded successfully!")
+        -- If vMenu is already running, wait 1 second then create menu manually
+        if exports.vMenu and exports.vMenu:CheckMenu("main-menu") then
+            print("^3[" .. resourceName .. "]^7 vMenu already running, waiting 1 second before menu creation...")
+            Citizen.Wait(1000)
+            createCinematicCamMenu()
+        else
+            print("^3[" .. resourceName .. "]^7 Waiting for vMenu:SetupTickFunctions event...")
+        end
+    end
+end)
