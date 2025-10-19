@@ -4,34 +4,16 @@ A cinematic camera plugin for vMenu, provides the menu "cinematic_cam" which can
 
 This resource serves as an example of how to create a plugin using vMenu's export system, and provides a complete reference for vMenu's export functions, allowing other resources to create addon plugins that integrate with vMenu's menu system.
 
-## Menu Initialization Timing
-
-When creating menus with `CreateMenu`, the player name displayed in the menu header is cached at creation time. If the menu is created immediately on script load, it may show "Player 2" instead of the actual player name. To avoid this, delay menu creation until vMenu is fully initialized:
-
-```lua
-local resourceName = GetCurrentResourceName()
-
-AddEventHandler("vMenu:SetupTickFunctions", function()
-    Citizen.Wait(100)
-    createYourMenu()
-end)
-
-AddEventHandler('onResourceStart', function(resource)
-    if resource == resourceName then
-        if exports.vMenu and exports.vMenu:CheckMenu("main-menu") then
-            Citizen.Wait(1000)
-            createYourMenu()
-        end
-    end
-end)
-```
-
 ## Table of Contents
 
 1. [Menu Management](#menu-management)
 2. [Menu Items](#menu-items)
 3. [Utilities](#utilities)
 4. [Examples](#examples)
+   - [Menu Initialization Timing](#menu-initialization-timing)
+   - [Complete Plugin Example](#complete-plugin-example-lua)
+   - [Adding to Built-in vMenu Menus](#adding-to-built-in-vmenu-menus)
+   - [Dynamic Menu Creation](#dynamic-menu-creation)
 
 ---
 
@@ -51,8 +33,6 @@ exports['vmenu']:CreateMenu(menuId, menuTitle, menuDescription, callback)
 - `menuTitle` (string, optional): Display title (default: "Menu")
 - `menuDescription` (string, optional): Subtitle text (default: "")
 - `callback` (function, optional): Function called when menu opens
-
-Note: The player name shown in the menu header is cached when this function is called. See [Menu Initialization Timing](#menu-initialization-timing) for proper initialization.
 
 **Example:**
 ```lua
@@ -454,6 +434,28 @@ exports['vmenu']:Notify('Default notification')
 
 ## Examples
 
+### Menu Initialization Timing
+
+When creating menus with `CreateMenu`, the player name displayed in the menu header is cached at creation time. If the menu is created immediately on script load, it may show "Player 2" instead of the actual player name. To avoid this, delay menu creation until vMenu is fully initialized:
+
+```lua
+local resourceName = GetCurrentResourceName()
+
+AddEventHandler("vMenu:SetupTickFunctions", function()
+    Citizen.Wait(100)
+    createYourMenu()
+end)
+
+AddEventHandler('onResourceStart', function(resource)
+    if resource == resourceName then
+        if exports.vMenu and exports.vMenu:CheckMenu("main-menu") then
+            Citizen.Wait(1000)
+            createYourMenu()
+        end
+    end
+end)
+```
+
 ### Complete Plugin Example (Lua)
 
 ```lua
@@ -515,7 +517,7 @@ end)
     end, false)
 end
 
--- Initialize after vMenu is ready (see "Menu Initialization Timing" section)
+-- Initialize after vMenu is ready
 AddEventHandler("vMenu:SetupTickFunctions", function()
     Citizen.Wait(100)
     initializePlugin()
