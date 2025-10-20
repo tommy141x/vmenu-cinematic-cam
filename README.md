@@ -4,64 +4,16 @@ A cinematic camera plugin for vMenu, provides the menu "cinematic_cam" which can
 
 This resource serves as an example of how to create a plugin using vMenu's export system, and provides a complete reference for vMenu's export functions, allowing other resources to create addon plugins that integrate with vMenu's menu system.
 
-## Initialization
+## Table of Contents
 
-### OnReady
-
-Registers a callback to be invoked when vMenu is fully initialized and ready. This is the recommended way to initialize your plugin.
-
-**Syntax:**
-```lua
-exports['vMenu']:OnReady(callback)
-```
-
-**Parameters:**
-- `callback` (function, required): Function to call when vMenu is ready
-
-**Important:** If your callback performs asynchronous work (menu modifications, waits, etc.), wrap your logic in `Citizen.CreateThread()` to prevent serialization errors.
-
-**Example:**
-```lua
--- Simple callback (no async work)
-exports.vMenu:OnReady(function()
-    print('vMenu is ready!')
-end)
-
--- Callback with async work (menu modifications, waits, etc.)
-exports.vMenu:OnReady(function()
-    Citizen.CreateThread(function()
-        setupMyMenus()
-    end)
-end)
-```
-
-**How it works:**
-- If vMenu is already ready when you call `OnReady`, your callback fires immediately
-- If vMenu is not ready yet, your callback is queued and fires when vMenu finishes initialization
-- This eliminates the need for complex event handlers and timing checks
-
----
-
-### IsReady
-
-Checks if vMenu is ready for external interactions.
-
-**Syntax:**
-```lua
-local ready = exports['vMenu']:IsReady()
-```
-
-**Returns:**
-- `boolean`: True if vMenu is ready, false otherwise
-
-**Example:**
-```lua
-if exports.vMenu:IsReady() then
-    print('vMenu is ready!')
-else
-    print('vMenu is still initializing...')
-end
-```
+1. [Menu Management](#menu-management)
+2. [Menu Items](#menu-items)
+3. [Utilities](#utilities)
+4. [Examples](#examples)
+   - [Menu Initialization Timing](#menu-initialization-timing)
+   - [Complete Plugin Example](#complete-plugin-example-lua)
+   - [Adding to Built-in vMenu Menus](#adding-to-built-in-vmenu-menus)
+   - [Dynamic Menu Creation](#dynamic-menu-creation)
 
 ---
 
@@ -73,7 +25,7 @@ Creates a new dynamic menu.
 
 **Syntax:**
 ```lua
-exports['vMenu']:CreateMenu(menuId, menuTitle, menuDescription, callback)
+exports['vmenu']:CreateMenu(menuId, menuTitle, menuDescription, callback)
 ```
 
 **Parameters:**
@@ -84,7 +36,7 @@ exports['vMenu']:CreateMenu(menuId, menuTitle, menuDescription, callback)
 
 **Example:**
 ```lua
-exports['vMenu']:CreateMenu('my-custom-menu', 'Custom Menu', 'My Plugin Menu', function()
+exports['vmenu']:CreateMenu('my-custom-menu', 'Custom Menu', 'My Plugin Menu', function()
     print('Menu opened!')
 end)
 ```
@@ -97,7 +49,7 @@ Opens a menu by ID (works with both custom and built-in vMenu menus).
 
 **Syntax:**
 ```lua
-exports['vMenu']:OpenMenu(menuId)
+exports['vmenu']:OpenMenu(menuId)
 ```
 
 **Parameters:**
@@ -105,8 +57,8 @@ exports['vMenu']:OpenMenu(menuId)
 
 **Example:**
 ```lua
-exports['vMenu']:OpenMenu('my-custom-menu')
-exports['vMenu']:OpenMenu('player-options') -- Opens built-in menu
+exports['vmenu']:OpenMenu('my-custom-menu')
+exports['vmenu']:OpenMenu('player-options') -- Opens built-in menu
 ```
 
 ---
@@ -117,7 +69,7 @@ Closes a specific menu.
 
 **Syntax:**
 ```lua
-exports['vMenu']:CloseMenu(menuId)
+exports['vmenu']:CloseMenu(menuId)
 ```
 
 **Parameters:**
@@ -125,7 +77,7 @@ exports['vMenu']:CloseMenu(menuId)
 
 **Example:**
 ```lua
-exports['vMenu']:CloseMenu('my-custom-menu')
+exports['vmenu']:CloseMenu('my-custom-menu')
 ```
 
 ---
@@ -136,12 +88,12 @@ Closes all open menus.
 
 **Syntax:**
 ```lua
-exports['vMenu']:CloseAllMenus()
+exports['vmenu']:CloseAllMenus()
 ```
 
 **Example:**
 ```lua
-exports['vMenu']:CloseAllMenus()
+exports['vmenu']:CloseAllMenus()
 ```
 
 ---
@@ -152,7 +104,7 @@ Checks if a menu exists.
 
 **Syntax:**
 ```lua
-local exists = exports['vMenu']:CheckMenu(menuId)
+local exists = exports['vmenu']:CheckMenu(menuId)
 ```
 
 **Parameters:**
@@ -163,7 +115,7 @@ local exists = exports['vMenu']:CheckMenu(menuId)
 
 **Example:**
 ```lua
-if exports['vMenu']:CheckMenu('my-custom-menu') then
+if exports['vmenu']:CheckMenu('my-custom-menu') then
     print('Menu exists!')
 end
 ```
@@ -176,7 +128,7 @@ Removes all items from a menu.
 
 **Syntax:**
 ```lua
-exports['vMenu']:ClearMenu(menuId)
+exports['vmenu']:ClearMenu(menuId)
 ```
 
 **Parameters:**
@@ -184,7 +136,7 @@ exports['vMenu']:ClearMenu(menuId)
 
 **Example:**
 ```lua
-exports['vMenu']:ClearMenu('my-custom-menu')
+exports['vmenu']:ClearMenu('my-custom-menu')
 ```
 
 ---
@@ -195,7 +147,7 @@ Refreshes a menu's display (useful after adding/removing items).
 
 **Syntax:**
 ```lua
-exports['vMenu']:RefreshMenu(menuId)
+exports['vmenu']:RefreshMenu(menuId)
 ```
 
 **Parameters:**
@@ -203,7 +155,7 @@ exports['vMenu']:RefreshMenu(menuId)
 
 **Example:**
 ```lua
-exports['vMenu']:RefreshMenu('my-custom-menu')
+exports['vmenu']:RefreshMenu('my-custom-menu')
 ```
 
 ---
@@ -214,7 +166,7 @@ Permanently deletes a dynamic menu (only works with menus created via CreateMenu
 
 **Syntax:**
 ```lua
-exports['vMenu']:DeleteMenu(menuId)
+exports['vmenu']:DeleteMenu(menuId)
 ```
 
 **Parameters:**
@@ -222,7 +174,7 @@ exports['vMenu']:DeleteMenu(menuId)
 
 **Example:**
 ```lua
-exports['vMenu']:DeleteMenu('my-custom-menu')
+exports['vmenu']:DeleteMenu('my-custom-menu')
 ```
 
 ---
@@ -233,50 +185,19 @@ Returns all available menu IDs (both custom and built-in).
 
 **Syntax:**
 ```lua
-local menuIds = exports['vMenu']:GetAllMenuIds()
+local menuIds = exports['vmenu']:GetAllMenuIds()
 ```
 
 **Returns:**
-- `string[]`: Array of all menu IDs (regardless of permissions)
+- `string[]`: Array of menu IDs
 
 **Example:**
 ```lua
-local menus = exports['vMenu']:GetAllMenuIds()
+local menus = exports['vmenu']:GetAllMenuIds()
 for _, menuId in ipairs(menus) do
     print('Available menu: ' .. menuId)
 end
 ```
-
----
-
-### IsMenuPermitted
-
-Checks if a menu is permitted based on vMenu permissions.
-
-**Syntax:**
-```lua
-local permitted = exports['vMenu']:IsMenuPermitted(menuId)
-```
-
-**Parameters:**
-- `menuId` (string, required): Menu identifier
-
-**Returns:**
-- `boolean`: True if the player has permission to access the menu, false otherwise
-
-**Example:**
-```lua
-local menuIds = exports.vMenu:GetAllMenuIds()
-for _, menuId in ipairs(menuIds) do
-    if exports.vMenu:IsMenuPermitted(menuId) then
-        print('Player can access: ' .. menuId)
-    else
-        print('Player cannot access: ' .. menuId)
-    end
-end
-```
-
-**Note:** Use this to filter menus before displaying them to players, especially when reorganizing the main menu.
 
 ---
 
@@ -288,7 +209,7 @@ Adds a clickable button to a menu.
 
 **Syntax:**
 ```lua
-exports['vMenu']:AddButton(menuId, buttonId, buttonLabel, buttonDescription, rightLabel, callback)
+exports['vmenu']:AddButton(menuId, buttonId, buttonLabel, buttonDescription, rightLabel, callback)
 ```
 
 **Parameters:**
@@ -301,14 +222,14 @@ exports['vMenu']:AddButton(menuId, buttonId, buttonLabel, buttonDescription, rig
 
 **Example:**
 ```lua
-exports['vMenu']:AddButton('my-custom-menu', 'test-button', 'Click Me', 'This is a test button', '→', function()
+exports['vmenu']:AddButton('my-custom-menu', 'test-button', 'Click Me', 'This is a test button', '→', function()
     print('Button clicked!')
 end)
 ```
 
 **Legacy Syntax (still supported):**
 ```lua
-exports['vMenu']:AddButton(menuId, buttonId, buttonLabel, buttonDescription, callback)
+exports['vmenu']:AddButton(menuId, buttonId, buttonLabel, buttonDescription, callback)
 ```
 
 ---
@@ -319,7 +240,7 @@ Adds a scrollable list item to a menu.
 
 **Syntax:**
 ```lua
-exports['vMenu']:AddList(menuId, listId, listLabel, options, defaultIndex, description, callback)
+exports['vmenu']:AddList(menuId, listId, listLabel, options, defaultIndex, description, callback)
 ```
 
 **Parameters:**
@@ -340,7 +261,7 @@ exports['vMenu']:AddList(menuId, listId, listLabel, options, defaultIndex, descr
 **Example:**
 ```lua
 local options = {'Option 1', 'Option 2', 'Option 3'}
-exports['vMenu']:AddList('my-custom-menu', 'test-list', 'Choose Option', options, 0, 'Select an option', function(selected, value, index, oldIndex)
+exports['vmenu']:AddList('my-custom-menu', 'test-list', 'Choose Option', options, 0, 'Select an option', function(selected, value, index, oldIndex)
     if selected then
         print('Selected: ' .. value .. ' at index ' .. index)
     else
@@ -357,7 +278,7 @@ Adds a checkbox item to a menu.
 
 **Syntax:**
 ```lua
-exports['vMenu']:AddCheckbox(menuId, checkboxId, checkboxLabel, description, defaultValue, callback)
+exports['vmenu']:AddCheckbox(menuId, checkboxId, checkboxLabel, description, defaultValue, callback)
 ```
 
 **Parameters:**
@@ -373,7 +294,7 @@ exports['vMenu']:AddCheckbox(menuId, checkboxId, checkboxLabel, description, def
 
 **Example:**
 ```lua
-exports['vMenu']:AddCheckbox('my-custom-menu', 'test-checkbox', 'Enable Feature', 'Toggle this feature', false, function(checked)
+exports['vmenu']:AddCheckbox('my-custom-menu', 'test-checkbox', 'Enable Feature', 'Toggle this feature', false, function(checked)
     print('Checkbox is now: ' .. tostring(checked))
 end)
 ```
@@ -386,7 +307,7 @@ Adds a slider item to a menu (0-10 range, representing 0-100%).
 
 **Syntax:**
 ```lua
-exports['vMenu']:AddSlider(menuId, sliderId, sliderLabel, description, defaultValue, callback)
+exports['vmenu']:AddSlider(menuId, sliderId, sliderLabel, description, defaultValue, callback)
 ```
 
 **Parameters:**
@@ -403,7 +324,7 @@ exports['vMenu']:AddSlider(menuId, sliderId, sliderLabel, description, defaultVa
 
 **Example:**
 ```lua
-exports['vMenu']:AddSlider('my-custom-menu', 'volume-slider', 'Volume', 'Adjust volume level', 5, function(oldPos, newPos)
+exports['vmenu']:AddSlider('my-custom-menu', 'volume-slider', 'Volume', 'Adjust volume level', 5, function(oldPos, newPos)
     local percentage = (newPos / 10) * 100
     print('Volume: ' .. percentage .. '%')
 end)
@@ -417,7 +338,7 @@ Adds a spacer/separator to a menu.
 
 **Syntax:**
 ```lua
-exports['vMenu']:AddSpacer(menuId, spacerId, spacerText, description)
+exports['vmenu']:AddSpacer(menuId, spacerId, spacerText, description)
 ```
 
 **Parameters:**
@@ -428,7 +349,7 @@ exports['vMenu']:AddSpacer(menuId, spacerId, spacerText, description)
 
 **Example:**
 ```lua
-exports['vMenu']:AddSpacer('my-custom-menu', 'section-1', '~b~Section 1', '')
+exports['vmenu']:AddSpacer('my-custom-menu', 'section-1', '~b~Section 1', '')
 ```
 
 ---
@@ -439,7 +360,7 @@ Adds a button that links to another menu (creates submenu navigation).
 
 **Syntax:**
 ```lua
-exports['vMenu']:AddSubmenuButton(parentMenuId, buttonId, submenuId, buttonLabel, buttonDescription, callback)
+exports['vmenu']:AddSubmenuButton(parentMenuId, buttonId, submenuId, buttonLabel, buttonDescription, callback)
 ```
 
 **Parameters:**
@@ -453,11 +374,11 @@ exports['vMenu']:AddSubmenuButton(parentMenuId, buttonId, submenuId, buttonLabel
 **Example:**
 ```lua
 -- Create parent and submenu first
-exports['vMenu']:CreateMenu('parent-menu', 'Parent Menu', 'Main Menu')
-exports['vMenu']:CreateMenu('child-menu', 'Child Menu', 'Submenu')
+exports['vmenu']:CreateMenu('parent-menu', 'Parent Menu', 'Main Menu')
+exports['vmenu']:CreateMenu('child-menu', 'Child Menu', 'Submenu')
 
 -- Link them together
-exports['vMenu']:AddSubmenuButton('parent-menu', 'child-button', 'child-menu', 'Open Submenu', 'Opens the child menu')
+exports['vmenu']:AddSubmenuButton('parent-menu', 'child-button', 'child-menu', 'Open Submenu', 'Opens the child menu')
 ```
 
 ---
@@ -468,7 +389,7 @@ Removes an item from a menu by ID or index.
 
 **Syntax:**
 ```lua
-exports['vMenu']:RemoveItem(menuId, itemIdOrIndex)
+exports['vmenu']:RemoveItem(menuId, itemIdOrIndex)
 ```
 
 **Parameters:**
@@ -478,10 +399,10 @@ exports['vMenu']:RemoveItem(menuId, itemIdOrIndex)
 **Example:**
 ```lua
 -- Remove by ID
-exports['vMenu']:RemoveItem('my-custom-menu', 'test-button')
+exports['vmenu']:RemoveItem('my-custom-menu', 'test-button')
 
 -- Remove by index
-exports['vMenu']:RemoveItem('my-custom-menu', 0)
+exports['vmenu']:RemoveItem('my-custom-menu', 0)
 ```
 
 ---
@@ -494,7 +415,7 @@ Displays a notification to the player.
 
 **Syntax:**
 ```lua
-exports['vMenu']:Notify(message, type)
+exports['vmenu']:Notify(message, type)
 ```
 
 **Parameters:**
@@ -503,132 +424,136 @@ exports['vMenu']:Notify(message, type)
 
 **Example:**
 ```lua
-exports['vMenu']:Notify('Hello World!', 'info')
-exports['vMenu']:Notify('Something went wrong!', 'error')
-exports['vMenu']:Notify('Task completed!', 'success')
-exports['vMenu']:Notify('Default notification')
+exports['vmenu']:Notify('Hello World!', 'info')
+exports['vmenu']:Notify('Something went wrong!', 'error')
+exports['vmenu']:Notify('Task completed!', 'success')
+exports['vmenu']:Notify('Default notification')
 ```
 
 ---
 
 ## Examples
 
-### Basic Plugin Setup
+### Menu Initialization Timing
 
-The simplest way to initialize your vMenu plugin using the new `OnReady` system:
+When creating menus with `CreateMenu`, the player name displayed in the menu header is cached at creation time. If the menu is created immediately on script load, it may show "Player 2" instead of the actual player name. To avoid this, delay menu creation until vMenu is fully initialized:
 
 ```lua
-exports.vMenu:OnReady(function()
-    Citizen.CreateThread(function()
-        -- Create your menu
-        exports.vMenu:CreateMenu('my-plugin', 'My Plugin', 'Example Plugin')
+local resourceName = GetCurrentResourceName()
 
-        -- Add menu items
-        exports.vMenu:AddButton('my-plugin', 'test-btn', 'Test Button', 'Click me!', nil, function()
-            print('Button clicked!')
-        end)
+AddEventHandler("vMenu:SetupTickFunctions", function()
+    Citizen.Wait(100)
+    createYourMenu()
+end)
 
-        -- Register command to open menu
-        RegisterCommand('myplugin', function()
-            exports.vMenu:OpenMenu('my-plugin')
-        end)
-    end)
+AddEventHandler('onResourceStart', function(resource)
+    if resource == resourceName then
+        if exports.vMenu and exports.vMenu:CheckMenu("main-menu") then
+            Citizen.Wait(1000)
+            createYourMenu()
+        end
+    end
 end)
 ```
-
-**Why wrap in `Citizen.CreateThread`?**
-When your callback performs asynchronous work like menu modifications, wrapping in a thread prevents Lua return value serialization errors.
-
----
 
 ### Complete Plugin Example (Lua)
 
 ```lua
-local function setupPlugin()
+local resourceName = GetCurrentResourceName()
+
+function initializePlugin()
     -- Create main menu
-    exports.vMenu:CreateMenu('my-plugin', 'My Plugin', 'Example Plugin Menu', function()
+    exports['vmenu']:CreateMenu('my-plugin', 'My Plugin', 'Example Plugin Menu', function()
         print('My Plugin menu opened!')
     end)
 
-    -- Add a button
-    exports.vMenu:AddButton('my-plugin', 'spawn-vehicle', 'Spawn Vehicle', 'Spawns a vehicle', nil, function()
-        local vehicleHash = GetHashKey('adder')
-        local playerPed = PlayerPedId()
-        local coords = GetEntityCoords(playerPed)
+-- Add a button
+exports['vmenu']:AddButton('my-plugin', 'spawn-vehicle', 'Spawn Vehicle', 'Spawns a vehicle', nil, function()
+    local vehicleHash = GetHashKey('adder')
+    local playerPed = PlayerPedId()
+    local coords = GetEntityCoords(playerPed)
 
-        RequestModel(vehicleHash)
-        while not HasModelLoaded(vehicleHash) do
-            Wait(0)
-        end
+    RequestModel(vehicleHash)
+    while not HasModelLoaded(vehicleHash) do
+        Wait(0)
+    end
 
-        local vehicle = CreateVehicle(vehicleHash, coords.x, coords.y, coords.z, GetEntityHeading(playerPed), true, false)
-        SetPedIntoVehicle(playerPed, vehicle, -1)
+    local vehicle = CreateVehicle(vehicleHash, coords.x, coords.y, coords.z, GetEntityHeading(playerPed), true, false)
+    SetPedIntoVehicle(playerPed, vehicle, -1)
 
-        exports.vMenu:Notify('Vehicle spawned!', 'success')
-    end)
+    exports['vmenu']:Notify('Vehicle spawned!', 'success')
+end)
 
-    -- Add a checkbox
-    local godModeEnabled = false
-    exports.vMenu:AddCheckbox('my-plugin', 'godmode-toggle', 'God Mode', 'Toggle invincibility', false, function(checked)
-        godModeEnabled = checked
-        SetEntityInvincible(PlayerPedId(), checked)
-        exports.vMenu:Notify('God Mode: ' .. tostring(checked), 'info')
-    end)
+-- Add a checkbox
+local godModeEnabled = false
+exports['vmenu']:AddCheckbox('my-plugin', 'godmode-toggle', 'God Mode', 'Toggle invincibility', false, function(checked)
+    godModeEnabled = checked
+    SetEntityInvincible(PlayerPedId(), checked)
+    exports['vmenu']:Notify('God Mode: ' .. tostring(checked), 'info')
+end)
 
-    -- Add a list
-    local weaponList = {'WEAPON_PISTOL', 'WEAPON_SMG', 'WEAPON_RIFLE'}
-    local weaponNames = {'Pistol', 'SMG', 'Rifle'}
-    exports.vMenu:AddList('my-plugin', 'weapon-list', 'Give Weapon', weaponNames, 0, 'Select a weapon', function(selected, value, index)
-        if selected then
-            GiveWeaponToPed(PlayerPedId(), GetHashKey(weaponList[index + 1]), 250, false, true)
-            exports.vMenu:Notify('Given: ' .. value, 'success')
-        end
-    end)
+-- Add a list
+local weaponList = {'WEAPON_PISTOL', 'WEAPON_SMG', 'WEAPON_RIFLE'}
+local weaponNames = {'Pistol', 'SMG', 'Rifle'}
+exports['vmenu']:AddList('my-plugin', 'weapon-list', 'Give Weapon', weaponNames, 0, 'Select a weapon', function(selected, value, index)
+    if selected then
+        GiveWeaponToPed(PlayerPedId(), GetHashKey(weaponList[index + 1]), 250, false, true)
+        exports['vmenu']:Notify('Given: ' .. value, 'success')
+    end
+end)
 
-    -- Add submenu
-    exports.vMenu:CreateMenu('my-plugin-settings', 'Settings', 'Plugin Settings')
-    exports.vMenu:AddSubmenuButton('my-plugin', 'settings-btn', 'my-plugin-settings', 'Settings', 'Configure plugin')
+-- Add submenu
+exports['vmenu']:CreateMenu('my-plugin-settings', 'Settings', 'Plugin Settings')
+exports['vmenu']:AddSubmenuButton('my-plugin', 'settings-btn', 'my-plugin-settings', 'Settings', 'Configure plugin')
 
-    -- Add items to submenu
-    exports.vMenu:AddCheckbox('my-plugin-settings', 'auto-heal', 'Auto Heal', 'Automatically heal player', false, function(checked)
-        print('Auto heal: ' .. tostring(checked))
-    end)
+-- Add items to submenu
+exports['vmenu']:AddCheckbox('my-plugin-settings', 'auto-heal', 'Auto Heal', 'Automatically heal player', false, function(checked)
+    print('Auto heal: ' .. tostring(checked))
+end)
 
     -- Command to open menu
     RegisterCommand('myplugin', function()
-        exports.vMenu:OpenMenu('my-plugin')
-    end)
+        exports['vmenu']:OpenMenu('my-plugin')
+    end, false)
 end
 
--- Initialize using OnReady
-exports.vMenu:OnReady(function()
-    Citizen.CreateThread(setupPlugin)
+-- Initialize after vMenu is ready
+AddEventHandler("vMenu:SetupTickFunctions", function()
+    Citizen.Wait(100)
+    initializePlugin()
+end)
+
+AddEventHandler('onResourceStart', function(resource)
+    if resource == resourceName then
+        if exports.vMenu and exports.vMenu:CheckMenu("main-menu") then
+            Citizen.Wait(1000)
+            initializePlugin()
+        end
+    end
 end)
 ```
-
----
 
 ### Adding to Built-in vMenu Menus
 
 ```lua
-exports.vMenu:OnReady(function()
-    Citizen.CreateThread(function()
-        -- Add a button to the Vehicle Options menu
-        if exports.vMenu:CheckMenu('vehicle-options') then
-            exports.vMenu:AddButton('vehicle-options', 'custom-paint', 'Custom Paint Job', 'Apply custom paint', nil, function()
-                local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
-                if vehicle ~= 0 then
-                    SetVehicleCustomPrimaryColour(vehicle, 255, 0, 0)
-                    SetVehicleCustomSecondaryColour(vehicle, 0, 0, 255)
-                    exports.vMenu:Notify('Custom paint applied!', 'success')
-                end
-            end)
-        end
-    end)
+-- Add items to existing vMenu menus
+RegisterNetEvent('vMenu:client:ready', function()
+    -- Wait a bit for vMenu to fully initialize
+    Wait(1000)
+
+    -- Add a button to the Vehicle Options menu
+    if exports['vmenu']:CheckMenu('vehicle-options') then
+        exports['vmenu']:AddButton('vehicle-options', 'custom-paint', 'Custom Paint Job', 'Apply custom paint', nil, function()
+            local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
+            if vehicle ~= 0 then
+                SetVehicleCustomPrimaryColour(vehicle, 255, 0, 0)
+                SetVehicleCustomSecondaryColour(vehicle, 0, 0, 255)
+                exports['vmenu']:Notify('Custom paint applied!', 'success')
+            end
+        end)
+    end
 end)
 ```
-
----
 
 ### Dynamic Menu Creation
 
@@ -636,72 +561,21 @@ end)
 -- Create a menu dynamically based on server data
 RegisterNetEvent('myresource:showVehicleMenu', function(vehicles)
     -- Create menu if it doesn't exist
-    if not exports.vMenu:CheckMenu('vehicle-catalog') then
-        exports.vMenu:CreateMenu('vehicle-catalog', 'Vehicle Catalog', 'Available Vehicles')
+    if not exports['vmenu']:CheckMenu('vehicle-catalog') then
+        exports['vmenu']:CreateMenu('vehicle-catalog', 'Vehicle Catalog', 'Available Vehicles')
     else
-        exports.vMenu:ClearMenu('vehicle-catalog')
+        exports['vmenu']:ClearMenu('vehicle-catalog')
     end
 
     -- Add vehicles dynamically
     for i, vehicle in ipairs(vehicles) do
-        exports.vMenu:AddButton('vehicle-catalog', 'vehicle-' .. i, vehicle.name, vehicle.description, '$' .. vehicle.price, function()
+        exports['vmenu']:AddButton('vehicle-catalog', 'vehicle-' .. i, vehicle.name, vehicle.description, '$' .. vehicle.price, function()
             TriggerServerEvent('myresource:purchaseVehicle', vehicle.id)
         end)
     end
 
     -- Open the menu
-    exports.vMenu:OpenMenu('vehicle-catalog')
-end)
-```
-
----
-
-### Menu Reorganization
-
-Example of reorganizing the vMenu main menu with permission checking:
-
-```lua
-exports.vMenu:OnReady(function()
-    Citizen.CreateThread(function()
-        -- Get all available menus
-        local allMenus = exports.vMenu:GetAllMenuIds()
-
-        -- Clear main menu (keeping first item - Online Players)
-        for i = 1, 20 do
-            local success = pcall(function()
-                exports.vMenu:RemoveItem('main-menu', 1)
-            end)
-            if not success then break end
-        end
-
-        -- Define desired menu order
-        local desiredOrder = {
-            {id = 'player-related-options', name = 'Player Options', desc = 'Player related options'},
-            {id = 'vehicle-related-options', name = 'Vehicle Options', desc = 'Vehicle related options'},
-            {id = 'world-options', name = 'World Options', desc = 'World related options'},
-            {id = 'misc-settings', name = 'Misc Settings', desc = 'Miscellaneous settings'},
-        }
-
-        -- Add menus in desired order (with permission check)
-        for _, menuItem in ipairs(desiredOrder) do
-            -- Check if menu exists
-            local exists = false
-            for _, availableId in ipairs(allMenus) do
-                if availableId == menuItem.id then
-                    exists = true
-                    break
-                end
-            end
-
-            -- Check if player has permission
-            if exists and exports.vMenu:IsMenuPermitted(menuItem.id) then
-                exports.vMenu:AddSubmenuButton('main-menu', menuItem.id .. '_btn', menuItem.id, menuItem.name, menuItem.desc)
-                print('Added menu: ' .. menuItem.name)
-            else
-                print('Skipping menu: ' .. menuItem.name .. ' (not permitted or unavailable)')
-            end
-        end
-    end)
+    exports['vmenu']:OpenMenu('vehicle-catalog')
 end)
 ```
 
@@ -712,17 +586,14 @@ end)
 Common built-in vMenu menus you can extend:
 
 - `player-options` - Player Options menu
-- `player-related-options` - Player Related Options (parent menu)
 - `online-players` - Online Players menu
 - `vehicle-options` - Vehicle Options menu
-- `vehicle-related-options` - Vehicle Related Options (parent menu)
 - `vehicle-spawner` - Vehicle Spawner menu
 - `player-appearance` - Player Appearance menu
 - `weapon-options` - Weapon Options menu
-- `world-options` - World Options menu (time/weather)
+- `time-options` - Time Options menu (if enabled)
+- `weather-options` - Weather Options menu (if enabled)
 - `voice-chat-settings` - Voice Chat Settings menu
 - `misc-settings` - Miscellaneous Settings menu
-- `recording-options` - Recording Options menu
-- `about-vmenu` - About vMenu menu
 
-**Note:** Use `GetAllMenuIds()` to get a complete list of available menus at runtime, and use `IsMenuPermitted()` to check if the player has access to a specific menu.
+Use `GetAllMenuIds()` to get a complete list of available menus at runtime.
