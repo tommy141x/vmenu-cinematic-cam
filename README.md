@@ -249,37 +249,6 @@ end
 
 ---
 
-### IsMenuPermitted
-
-Checks if a menu is permitted based on vMenu permissions.
-
-**Syntax:**
-```lua
-local permitted = exports['vMenu']:IsMenuPermitted(menuId)
-```
-
-**Parameters:**
-- `menuId` (string, required): Menu identifier
-
-**Returns:**
-- `boolean`: True if the player has permission to access the menu, false otherwise
-
-**Example:**
-```lua
-local menuIds = exports.vMenu:GetAllMenuIds()
-for _, menuId in ipairs(menuIds) do
-    if exports.vMenu:IsMenuPermitted(menuId) then
-        print('Player can access: ' .. menuId)
-    else
-        print('Player cannot access: ' .. menuId)
-    end
-end
-```
-
-**Note:** Use this to filter menus before displaying them to players, especially when reorganizing the main menu.
-
----
-
 ## Menu Items
 
 ### AddButton
@@ -725,4 +694,4 @@ Common built-in vMenu menus you can extend:
 - `recording-options` - Recording Options menu
 - `about-vmenu` - About vMenu menu
 
-**Note:** Use `GetAllMenuIds()` to get a complete list of available menus at runtime, and use `IsMenuPermitted()` to check if the player has access to a specific menu.
+**Note:** Use `GetAllMenuIds()` to get a complete list of available menus at runtime.
