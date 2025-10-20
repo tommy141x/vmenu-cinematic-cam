@@ -586,9 +586,14 @@ function ProcessCamControls()
         -- Native attachment: manually set rotation and update attachment with new offset
         SetCamRot(cam, targetRotX, targetRotY, targetRotZ, 2)
         AttachCamToEntity(cam, entity, offsetCoords.x, offsetCoords.y, offsetCoords.z, true)
+
+        -- Always set focus on player to keep world loaded around them
+        local playerCoords = GetEntityCoords(PlayerPedId())
+        SetFocusArea(playerCoords.x, playerCoords.y, playerCoords.z, 0.0, 0.0, 0.0)
     else
+        local playerCoords = GetEntityCoords(PlayerPedId())
+
         if not isAttached then
-            local playerCoords = GetEntityCoords(PlayerPedId())
             local distance = #(vector3(currentPosX, currentPosY, currentPosZ) - playerCoords)
 
             if (distance > Config.maxDistance) then
@@ -602,7 +607,8 @@ function ProcessCamControls()
             end
         end
 
-        SetFocusArea(currentPosX, currentPosY, currentPosZ, 0.0, 0.0, 0.0)
+        -- Always set focus on player to keep world loaded around them, not the camera
+        SetFocusArea(playerCoords.x, playerCoords.y, playerCoords.z, 0.0, 0.0, 0.0)
         SetCamCoord(cam, currentPosX, currentPosY, currentPosZ)
         SetCamRot(cam, currentRotX, currentRotY, currentRotZ, 2)
     end
@@ -762,26 +768,8 @@ function ToggleAttachMode(playerEntity)
     end
 end
 
-local resourceName = GetCurrentResourceName()
-
--- Listen for vMenu initialization complete event
-AddEventHandler("vMenu:SetupTickFunctions", function()
-    print("^3[" .. resourceName .. "]^7 vMenu initialization detected, creating cinematic camera menu...")
-    Citizen.Wait(100)
-    createCinematicCamMenu()
-end)
-
--- Resource start handler
-AddEventHandler('onResourceStart', function(resource)
-    if resource == resourceName then
-        print("^2[" .. resourceName .. "]^7 Cinematic Camera Plugin loaded successfully!")
-        -- If vMenu is already running, wait 1 second then create menu manually
-        if exports.vMenu and exports.vMenu:CheckMenu("main-menu") then
-            print("^3[" .. resourceName .. "]^7 vMenu already running, waiting 1 second before menu creation...")
-            Citizen.Wait(1000)
-            createCinematicCamMenu()
-        else
-            print("^3[" .. resourceName .. "]^7 Waiting for vMenu:SetupTickFunctions event...")
-        end
-    end
+-- Initialize when vMenu is ready using OnReady
+-- Wrap in a function that creates a thread to prevent Lua return value serialization issues
+exports.vMenu:OnReady(function()
+    Citizen.CreateThread(createCinematicCamMenu)
 end)
