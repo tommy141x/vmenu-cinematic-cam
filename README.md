@@ -662,8 +662,9 @@ exports.vMenu:OnReady(function()
                 end
             end
 
-            -- Check if player has permission
-            if exists and exports.vMenu:IsMenuPermitted(menuItem.id) then
+            -- Here you could also check for vMenu permissions with IsPlayerAceAllowed, you would need a server-side check for that.
+            -- For this example, we just check if the menu exists.
+            if exists then
                 exports.vMenu:AddSubmenuButton('main-menu', menuItem.id .. '_btn', menuItem.id, menuItem.name, menuItem.desc)
                 print('Added menu: ' .. menuItem.name)
             else
